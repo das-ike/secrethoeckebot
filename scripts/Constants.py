@@ -1,12 +1,12 @@
-__author__ = "Julian Schrittwieser"
+__author__ = "Julian Schrittwieser & Jannis Langmaack"
 
 players = {
     # only for testing purposes
     3: {
         "roles": [
-            "Liberal",
-            "Fascist",
-            "Hitler"
+            "PARTEI-Genossin",
+            "Faschist",
+            "Höcke"
         ],
         "track": [
             None,
@@ -20,10 +20,10 @@ players = {
     # only for testing purposes
     4: {
         "roles": [
-            "Liberal",
-            "Liberal",
-            "Fascist",
-            "Hitler"
+            "PARTEI-Genossin",
+            "PARTEI-Genossin",
+            "Faschist",
+            "Höcke"
         ],
         "track": [
             None,
@@ -36,11 +36,11 @@ players = {
     },
     5: {
         "roles": [
-            "Liberal",
-            "Liberal",
-            "Liberal",
-            "Fascist",
-            "Hitler"
+            "PARTEI-Genossin",
+            "PARTEI-Genossin",
+            "PARTEI-Genossin",
+            "Faschist",
+            "Höcke"
         ],
         "track": [
             None,
@@ -53,12 +53,12 @@ players = {
     },
     6: {
         "roles": [
-            "Liberal",
-            "Liberal",
-            "Liberal",
-            "Liberal",
-            "Fascist",
-            "Hitler"
+            "PARTEI-Genossin",
+            "PARTEI-Genossin",
+            "PARTEI-Genossin",
+            "PARTEI-Genossin",
+            "Faschist",
+            "Höcke"
         ],
         "track": [
             None,
@@ -71,13 +71,13 @@ players = {
     },
     7: {
         "roles": [
-            "Liberal",
-            "Liberal",
-            "Liberal",
-            "Liberal",
-            "Fascist",
-            "Fascist",
-            "Hitler"
+            "PARTEI-Genossin",
+            "PARTEI-Genossin",
+            "PARTEI-Genossin",
+            "PARTEI-Genossin",
+            "Faschist",
+            "Faschist",
+            "Höcke"
         ],
         "track": [
             None,
@@ -90,14 +90,14 @@ players = {
     },
     8: {
         "roles": [
-            "Liberal",
-            "Liberal",
-            "Liberal",
-            "Liberal",
-            "Liberal",
-            "Fascist",
-            "Fascist",
-            "Hitler"
+            "PARTEI-Genossin",
+            "PARTEI-Genossin",
+            "PARTEI-Genossin",
+            "PARTEI-Genossin",
+            "PARTEI-Genossin",
+            "Faschist",
+            "Faschist",
+            "Höcke"
         ],
         "track": [
             None,
@@ -110,15 +110,15 @@ players = {
     },
     9: {
         "roles": [
-            "Liberal",
-            "Liberal",
-            "Liberal",
-            "Liberal",
-            "Liberal",
-            "Fascist",
-            "Fascist",
-            "Fascist",
-            "Hitler"
+            "PARTEI-Genossin",
+            "PARTEI-Genossin",
+            "PARTEI-Genossin",
+            "PARTEI-Genossin",
+            "PARTEI-Genossin",
+            "Faschist",
+            "Faschist",
+            "Faschist",
+            "Höcke"
         ],
         "track": [
             "inspect",
@@ -131,16 +131,16 @@ players = {
     },
     10: {
         "roles": [
-            "Liberal",
-            "Liberal",
-            "Liberal",
-            "Liberal",
-            "Liberal",
-            "Liberal",
-            "Fascist",
-            "Fascist",
-            "Fascist",
-            "Hitler"
+            "PARTEI-Genossin",
+            "PARTEI-Genossin",
+            "PARTEI-Genossin",
+            "PARTEI-Genossin",
+            "PARTEI-Genossin",
+            "PARTEI-Genossin",
+            "Faschist",
+            "Faschist",
+            "Faschist",
+            "Höcke"
         ],
         "track": [
             "inspect",
@@ -154,21 +154,21 @@ players = {
 }
 
 pile = [
-        "liberal",
-        "liberal",
-        "liberal",
-        "liberal",
-        "liberal",
-        "liberal",
-        "fascist",
-        "fascist",
-        "fascist",
-        "fascist",
-        "fascist",
-        "fascist",
-        "fascist",
-        "fascist",
-        "fascist",
-        "fascist",
-        "fascist"
+        "Gesetz der extremen Mitte",
+        "Gesetz der extremen Mitte",
+        "Gesetz der extremen Mitte",
+        "Gesetz der extremen Mitte",
+        "Gesetz der extremen Mitte",
+        "Gesetz der extremen Mitte",
+        "Gesetz der Faschisten",
+        "Gesetz der Faschisten",
+        "Gesetz der Faschisten",
+        "Gesetz der Faschisten",
+        "Gesetz der Faschisten",
+        "Gesetz der Faschisten",
+        "Gesetz der Faschisten",
+        "Gesetz der Faschisten",
+        "Gesetz der Faschisten",
+        "Gesetz der Faschisten",
+        "Gesetz der Faschisten"
     ]
