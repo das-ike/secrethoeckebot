@@ -12,7 +12,7 @@ class Board(object):
         self.previous = []
 
     def print_board(self):
-        board = "--- Liberal acts ---\n"
+        board = "--- Gesetze der extremen Mitte ---\n"
         for i in range(5):
             if i < self.state.liberal_track:
                 board += u"\u2716\uFE0F" + " " #X
@@ -20,7 +20,7 @@ class Board(object):
                 board += u"\U0001F54A" + " " #dove
             else:
                 board += u"\u25FB\uFE0F" + " " #empty
-        board += "\n--- Fascist acts ---\n"
+        board += "\n--- Faschistengesetze ---\n"
         for i in range(6):
             if i < self.state.fascist_track:
                 board += u"\u2716\uFE0F" + " " #X
@@ -39,23 +39,23 @@ class Board(object):
                 elif action == "choose":
                     board += u"\U0001F454" + " " # tie
 
-        board += "\n--- Election counter ---\n"
+        board += "\n--- Wahlzähler ---\n"
         for i in range(3):
             if i < self.state.failed_votes:
                 board += u"\u2716\uFE0F" + " " #X
             else:
                 board += u"\u25FB\uFE0F" + " " #empty
 
-        board += "\n--- Presidential order  ---\n"
+        board += "\n--- Reihenfolge der Präsidenten  ---\n"
         for player in self.game.player_sequence:
             board += player.name + " " + u"\u27A1\uFE0F" + " "
         board = board[:-3]
         board += u"\U0001F501"
-        board += "\n\nThere are " + str(len(self.policies)) + " policies left on the pile."
+        board += "\n\nEs liegen noch " + str(len(self.policies)) + " Gesetze auf dem Stapel."
         if self.state.fascist_track >= 3:
-            board += "\n\n" + u"\u203C\uFE0F" + " Beware: If Hitler gets elected as Chancellor the fascists win the game! " + u"\u203C\uFE0F"
+            board += "\n\n" + u"\u203C\uFE0F" + " Achtung: Wird Höcke als Kanzler gewählt, gewinnen die Faschisten das Spiel! " + u"\u203C\uFE0F"
         if len(self.state.not_hitlers) > 0:
-            board += "\n\nWe know that the following players are not Hitler because they got elected as Chancellor after 3 fascist policies:\n"
+            board += "\n\nDie folgenden Spieler sind nicht Höcke, weil sie nach 3 Faschistengesetzen als Kanzler gewählt wurden:\n"
             for nh in self.state.not_hitlers:
                 board += nh.name + ", "
             board = board[:-2]
