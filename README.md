@@ -1,9 +1,9 @@
-# Telegram Bot for the card game Secret Hitler
-This is a simple Telegram Bot for the political (and in my opinion highly entertaining and educational) card game [Secret Hitler](http://secrethitler.com/).
+# Telegram Bot for the card game Secret Höcke
+This is a simple Telegram Bot for the political (and in my opinion highly entertaining and educational) card game [Secret Höcke](http://secrethitler.com/).
 Go check out this awesome game and support the creators!
 
 ##Start a game
-You can contact the bot via [t.me/thesecrethitlerbot](https://t.me/thesecrethitlerbot) or in Telegram under the name @thesecrethitlerbot.
+You can contact the bot via [t.me/thesecrethöckebot](https://t.me/thesecrethöckebot) or in Telegram under the name @thesecrethöckebot.
 Click Start and add the bot to your group (you need 5-10 people). The rest should be self explanatory.
 If you have any problems or find a bug please contact me here on Github or via [Telegram](https://t.me/juschritt) (@juschritt)!
 
