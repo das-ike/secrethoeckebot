@@ -3,9 +3,8 @@ This is a simple Telegram Bot for the political (and in my opinion highly entert
 Go check out this awesome game and support the creators!
 
 ##Start a game
-You can contact the bot via [t.me/thesecrethöckebot](https://t.me/thesecrethöckebot) or in Telegram under the name @thesecrethöckebot.
+You can contact the bot via [t.me/thesecrethoeckebot](https://t.me/thesecrethoeckebot) or in Telegram under the name @thesecrethoeckebot.
 Click Start and add the bot to your group (you need 5-10 people). The rest should be self explanatory.
-If you have any problems or find a bug please contact me here on Github or via [Telegram](https://t.me/juschritt) (@juschritt)!
 
 ##The following commands are available:
 
