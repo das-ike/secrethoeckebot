@@ -13,13 +13,13 @@ class Game(object):
 
     def get_hitler(self):
         for uid in self.playerlist:
-            if self.playerlist[uid].role == "Hitler":
+            if self.playerlist[uid].role == "Höcke":
                 return self.playerlist[uid]
 
     def get_fascists(self):
         fascists = []
         for uid in self.playerlist:
-            if self.playerlist[uid].role == "Fascist":
+            if self.playerlist[uid].role == "Faschist":
                 fascists.append(self.playerlist[uid])
         return fascists
 
@@ -42,6 +42,6 @@ class Game(object):
             for p in self.playerlist:
                 rtext += self.playerlist[p].name + "'s "
                 if self.playerlist[p].is_dead:
-                    rtext += "(dead) "
-                rtext += "secret role was " + self.playerlist[p].role + "\n"
+                    rtext += "(tot) "
+                rtext += "geheime Rolle war " + self.playerlist[p].role + "\n"
             return rtext
