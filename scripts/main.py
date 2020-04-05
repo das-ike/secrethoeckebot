@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# vim: set fileencoding=<utf-8> :
 __author__ = "Julian Schrittwieser & Jannis Langmaack"
 
 import logging as log
@@ -26,7 +26,7 @@ from Config import ADMIN
 
 # Enable logging
 log.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                level=log.INFO,
+                level=log.DEBUG,
                 filename='../logs/logging.log')
 
 logger = log.getLogger(__name__)
@@ -589,11 +589,10 @@ def enact_policy(bot, game, policy, anarchy):
                                                                                                                                                          "(oder sie belügen!) oder sie für sich behalten.")
                 action_inspect(bot, game)
             elif action == "choose":
-                bot.send_message(game.cid,
+                 bot.send_message(game.cid,
                                  "Präsidialmacht in Kraft gesetzt: Spezielle Präsidentschaftswahl " + u"\U0001F454" + "\nPräsident " + game.board.state.president.name + " darf den nächsten Präsidenten "
-                                                                                                                                                           "bestimmen. Danach geht die Reihenfolge wieder normal weiter."
-
-                action_choose(bot, game)
+                                                                                                                                                           "bestimmen. Danach geht die Reihenfolge wieder normal weiter.")
+                 action_choose(bot, game)
         else:
             start_next_round(bot, game)
     else:
@@ -821,7 +820,7 @@ def end_game(bot, game, game_endcode):
             #bot.send_message(ADMIN, "Game of Secret Höcke canceled in group %d" % game.cid)
             stats['cancelled'] = stats['cancelled'] + 1
         else:
-            bot.send_message(game.cid, "Game beendet!")
+            bot.send_message(game.cid, "Spiel beendet!")
     else:
         if game_endcode == -2:
             bot.send_message(game.cid,
@@ -866,15 +865,15 @@ def print_player_info(player_number):
     if player_number == 5:
         return "Es gibt 3 PARTEI-Genossinnen, 1 Faschist und Bernd Höcke. Höcke weiß, wer der andere Faschist ist."
     elif player_number == 6:
-        return "There are 4 PARTEI-Genossinnen, 1 Faschist und Bernd Höcke. Höcke wer der andere Faschist ist."
+        return "Es gibt 4 PARTEI-Genossinnen, 1 Faschist und Bernd Höcke. Höcke wer der andere Faschist ist."
     elif player_number == 7:
-        return "There are 4 PARTEI-Genossinnen, 2 Faschisten und Bernd Höcke. Höcke weiß nicht, wer die Faschisten sind."
+        return "Es gibt 4 PARTEI-Genossinnen, 2 Faschisten und Bernd Höcke. Höcke weiß nicht, wer die Faschisten sind."
     elif player_number == 8:
-        return "There are 5 PARTEI-Genossinnen, 2 Faschisten und Bernd Höcke. Höcke weiß nicht, wer die Faschisten sind."
+        return "Es gibt 5 PARTEI-Genossinnen, 2 Faschisten und Bernd Höcke. Höcke weiß nicht, wer die Faschisten sind."
     elif player_number == 9:
-        return "There are 5 PARTEI-Genossinnen, 3 Faschisten und Bernd Höcke. Höcke weiß nicht, wer die Faschisten sind."
+        return "Es gibt 5 PARTEI-Genossinnen, 3 Faschisten und Bernd Höcke. Höcke weiß nicht, wer die Faschisten sind."
     elif player_number == 10:
-        return "There are 6 PARTEI-Genossinnen, 3 Faschisten und Bernd Höcke. Höcke weiß nicht, wer die Faschisten sind."
+        return "Es gibt 6 PARTEI-Genossinnen, 3 Faschisten und Bernd Höcke. Höcke weiß nicht, wer die Faschisten sind."
 
 
 def inform_fascists(bot, game, player_number):
