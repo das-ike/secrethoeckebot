@@ -101,23 +101,24 @@ def command_ping(bot, update):
     cid = update.message.chat_id
     bot.send_message(cid, 'pong - v0.2')
 
+def command_axel(bot, update):
+    cid = update.message.chat_id
+    bot.send_message(cid, '...riecht nicht besonders gut....')
+
 
 # prints statistics, only ADMIN
 def command_stats(bot, update):
     cid = update.message.chat_id
     if cid == ADMIN:
-        with open("stats.json", 'r') as f:
-            stats = json.load(f)
-        stattext = "+++ Statistiken +++\n" + \
-                    "PARTEI-Genossin Siege (Gesetze): " + str(stats.get("libwin_policies")) + "\n" + \
-                    "PARTEI-Genossin Siege (Höcke getötet): " + str(stats.get("libwin_kill")) + "\n" + \
-                    "Faschist Siege (Gesetze): " + str(stats.get("fascwin_policies")) + "\n" + \
-                    "Faschist Siege (Höcke Kanzler): " + str(stats.get("fascwin_hitler")) + "\n" + \
-                    "Spiele abgebrochen: " + str(stats.get("cancelled")) + "\n\n" + \
-                    "Gesamtanzahl an Gruppen: " + str(len(stats.get("groups"))) + "\n" + \
-                    "Aktuell laufende Spiele: " + str(len(games))
-        bot.send_message(cid, stattext)
-
+            stattext = "+++ Statistiken +++\n" + \
+            "PARTEI-Genossin Siege (Gesetze): " + str(stats.get("libwin_policies")) + "\n" + \
+            "PARTEI-Genossin Siege (Höcke getötet): " + str(stats.get("libwin_kill")) + "\n" + \
+            "Faschist Siege (Gesetze): " + str(stats.get("fascwin_policies")) + "\n" + \
+            "Faschist Siege (Höcke Kanzler): " + str(stats.get("fascwin_hitler")) + "\n" + \
+            "Spiele abgebrochen: " + str(stats.get("cancelled")) + "\n\n" + \
+            "Gesamtanzahl an Gruppen: " + str(len(stats.get("groups"))) + "\n" + \
+            "Aktuell laufende Spiele: " + str(len(games))
+    bot.send_message(cid, stattext)
 
 # help page
 def command_help(bot, update):
@@ -133,7 +134,7 @@ def command_reboot(bot, update):
     cid = update.message.chat_id
     if cid == ADMIN:
         bot.send_message(cid, 'Jetzt neustarten!')
-        system('sudo reboot')
+        #system('sudo reboot')
 
 # broadcast message to all groups, only ADMIN
 def command_broadcast(bot, update, args):
@@ -168,12 +169,32 @@ def command_newgame(bot, update):
     if grptype == 'group' or grptype == 'supergroup':
         if cid not in games.keys():
             games[cid] = Game(cid, update.message.from_user.id)
-            with open("stats.json", 'r') as f:
-                stats = json.load(f)
-            if cid not in stats.get("groups"):
-                stats.get("groups").append(cid)
-                with open("stats.json", 'w') as f:
+
+            try:
+              with open("stats.json", 'r') as f:
+                  stats = json.load(f)
+
+            except:
+              log.info("stats is empty, creating...")
+              stats_raw= {}
+              stats_raw['libwin_policies'] = 0
+              stats_raw['libwin_kill'] = 0
+              stats_raw['fascwin_policies'] = 0
+              stats_raw['cancelled'] = 0
+              stats_raw['groups']
+              stats = json.dumps(stats_raw)
+              with open("stats.json", 'w') as f:
                     json.dump(stats, f)
+
+            if cid not in games.keys():
+                games[cid] = Game(cid, update.message.from_user.id)
+                with open("stats.json", 'r') as f:
+                    stats = json.load(f)
+                if cid not in stats.get("groups"):
+                    stats.get("groups").append(cid)
+                    with open("stats.json", 'w') as f:
+                        json.dump(stats, f)
+
             bot.send_message(cid,
                              "Neues Spiel erstellt! Jeder Spieler muss mit /join dem Spiel beitreten.\nDer Initiator dieses Spiels (oder der Admin) kann ebenfalls mit /join beitreten und mit /startgame das Spiel starten, sobald alle beigetreten sind!")
         else:
@@ -423,12 +444,13 @@ def voting_aftermath(bot, game, voting_success):
     log.info('voting_aftermath called')
     game.board.state.last_votes = {}
     if voting_success:
-        if game.board.state.fascist_track >= 3 and game.board.state.chancellor.role == "Höcke":
+        if game.board.state.fascist_track >= 3 and game.board.state.chancellor.is_hitler:
             # fascists win, because Höcke was elected as chancellor after 3 fascist policies
+
             game.board.state.game_endcode = -2
 
             end_game(bot, game, game.board.state.game_endcode)
-        elif game.board.state.fascist_track >= 3 and game.board.state.chancellor.role != "Höcke" and game.board.state.chancellor not in game.board.state.not_hitlers:
+        elif game.board.state.fascist_track >= 3 and game.board.state.chancellor.is_hitler == "False" and game.board.state.chancellor not in game.board.state.not_hitlers:
             game.board.state.not_hitlers.append(game.board.state.chancellor)
             draw_policies(bot, game)
         else:
@@ -541,9 +563,9 @@ def pass_two_policies(bot, game):
 
 def enact_policy(bot, game, policy, anarchy):
     log.info('enact_policy called')
-    if policy == "Gesetz der extrmen Mitte":
+    if policy == "Gesetz der extremen Mitte":
         game.board.state.liberal_track += 1
-    elif policy == "Gesetz der Afd":
+    elif policy == "Gesetz der AfD":
         game.board.state.fascist_track += 1
     game.board.state.failed_votes = 0  # reset counter
     if not anarchy:
@@ -564,7 +586,7 @@ def enact_policy(bot, game, policy, anarchy):
         end_game(bot, game, game.board.state.game_endcode)  # fascists win with 6 fascist policies
     sleep(3)
     if not anarchy:
-        if policy == "fascist":
+        if policy == "Gesetz der AfD":
             action = game.board.fascist_track_actions[game.board.state.fascist_track - 1]
             if action is None and game.board.state.fascist_track == 6:
                 pass
@@ -692,7 +714,7 @@ def choose_kill(bot, update):
         log.info("Player %s (%d) killed %s (%d)" % (
             callback.from_user.first_name, callback.from_user.id, chosen.name, chosen.uid))
         bot.edit_message_text("Du hast %s erschossen!" % chosen.name, callback.from_user.id, callback.message.message_id)
-        if chosen.role == "Höcke":
+        if chosen.is_hitler:
             bot.send_message(game.cid, "Präsident " + game.board.state.president.name + " erschießt " + chosen.name + ". ")
             end_game(bot, game, 2)
         else:
@@ -820,7 +842,7 @@ def end_game(bot, game, game_endcode):
             bot.send_message(game.cid,
                              "Spiel beendet!\n\n%s" % game.print_roles())
             #bot.send_message(ADMIN, "Game of Secret Höcke canceled in group %d" % game.cid)
-            stats['cancelled'] = stats['cancelled'] + 1
+        #    stats['cancelled'] = stats['cancelled'] + 1
         else:
             bot.send_message(game.cid, "Spiel beendet!")
     else:
@@ -841,7 +863,7 @@ def end_game(bot, game, game_endcode):
                              "Game over! Die PARTEI-Genossinnen gewinnen, indem sie Bernd Höcke erschossen haben! FCK AFD!\n\n%s" % game.print_roles())
             stats['libwin_kill'] = stats['libwin_kill'] + 1
 
-        #bot.send_message(ADMIN, "Game of Secret Höcke ended in group %d" % game.cid)
+        bot.send_message(ADMIN, "Game of Secret Höcke ended in group %d" % game.cid)
 
     with open("stats.json", 'w') as f:
         json.dump(stats, f)
@@ -860,6 +882,8 @@ def inform_players(bot, game, cid, player_number):
         party = get_membership(role)
         game.playerlist[uid].role = role
         game.playerlist[uid].party = party
+        if role == "Höcke":
+         game.playerlist[uid].is_hitler = True
         bot.send_message(uid, "Deine geheime Rolle ist: %s\nDeine Gesinnung ist %s" % (role, party))
 
 
@@ -884,6 +908,7 @@ def inform_fascists(bot, game, player_number):
         for uid in game.playerlist:
             role = game.playerlist[uid].role
             if role == "Höcke":
+                game.playerlist[uid].is_hitler = True
                 fascists = game.get_fascists()
                 if len(fascists) > 1:
                     bot.send_message(uid, "Fehler. Es sollte nur einen Faschisten geben in einem Spiel mit 5/6 Spielern!")
@@ -914,7 +939,7 @@ def inform_fascists(bot, game, player_number):
                     hitler = game.get_hitler()
                     bot.send_message(uid, "Höcke ist: %s" % hitler.name)
             elif role == "Höcke":
-                pass
+                game.playerlist[uid].is_hitler = True
             elif role == "PARTEI-Genossin":
                 pass
             else:
@@ -965,6 +990,8 @@ def main():
     dp.add_handler(CommandHandler("board", command_board))
     dp.add_handler(CommandHandler("rules", command_rules))
     dp.add_handler(CommandHandler("ping", command_ping))
+    dp.add_handler(CommandHandler("axel", command_axel))
+    dp.add_handler(CommandHandler("jones", command_axel))
     dp.add_handler(CommandHandler("symbols", command_symbols))
     dp.add_handler(CommandHandler("stats", command_stats))
     dp.add_handler(CommandHandler("reboot", command_reboot))
