@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # vim: set fileencoding=<utf-8> :
-__author__ = "Julian Schrittwieser & Jannis Langmaack"
+__author__ = "Julian Schrittwieser, Jannis Langmaack & Eike Wenzel"
 
 import logging as log
 import random
@@ -26,7 +26,7 @@ from Config import ADMIN
 
 # Enable logging
 log.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                level=log.DEBUG,
+                level=log.INFO,
                 filename='../logs/logging.log')
 
 logger = log.getLogger(__name__)
@@ -191,7 +191,7 @@ def command_join(bot, update):
             game = games[cid]
             uid = update.message.from_user.id
             fname = update.message.from_user.first_name
-            if game.board is None:  
+            if game.board is None:
                 if uid not in game.playerlist:
                     if len(game.playerlist) < 10:
                         player = Player(fname, uid)
@@ -426,6 +426,7 @@ def voting_aftermath(bot, game, voting_success):
         if game.board.state.fascist_track >= 3 and game.board.state.chancellor.role == "Höcke":
             # fascists win, because Höcke was elected as chancellor after 3 fascist policies
             game.board.state.game_endcode = -2
+
             end_game(bot, game, game.board.state.game_endcode)
         elif game.board.state.fascist_track >= 3 and game.board.state.chancellor.role != "Höcke" and game.board.state.chancellor not in game.board.state.not_hitlers:
             game.board.state.not_hitlers.append(game.board.state.chancellor)
@@ -462,6 +463,7 @@ def choose_policy(bot, update):
     regex = re.search("(-[0-9]*)_(.*)", callback.data)
     cid = int(regex.group(1))
     answer = regex.group(2)
+    log.info(answer)
     try:
         game = games[cid]
         strcid = str(game.cid)
@@ -482,7 +484,7 @@ def choose_policy(bot, update):
                 bot.edit_message_text("Du schlägst dem Präsidenten %s ein Veto vor." % game.board.state.president.name, uid,
                                       callback.message.message_id)
                 bot.send_message(game.cid,
-                                 "Kanzler %s schlägt dem Preäidenten %s ein Veto vor." % (
+                                 "Kanzler %s schlägt dem Präsidenten %s ein Veto vor." % (
                                      game.board.state.chancellor.name, game.board.state.president.name))
 
                 btns = [[InlineKeyboardButton("Veto! (Azkeptiere Vorschlag)", callback_data=strcid + "_yesveto")], [InlineKeyboardButton("Kein Veto! (Vorschlag ablehnen)", callback_data=strcid + "_noveto")]]
@@ -539,9 +541,9 @@ def pass_two_policies(bot, game):
 
 def enact_policy(bot, game, policy, anarchy):
     log.info('enact_policy called')
-    if policy == "Gesetz der extremen Mitte":
+    if policy == "Gesetz der extrmen Mitte":
         game.board.state.liberal_track += 1
-    elif policy == "Gesetz der Faschisten":
+    elif policy == "Gesetz der Afd":
         game.board.state.fascist_track += 1
     game.board.state.failed_votes = 0  # reset counter
     if not anarchy:
@@ -562,7 +564,7 @@ def enact_policy(bot, game, policy, anarchy):
         end_game(bot, game, game.board.state.game_endcode)  # fascists win with 6 fascist policies
     sleep(3)
     if not anarchy:
-        if policy == "Gesetz der Faschisten":
+        if policy == "fascist":
             action = game.board.fascist_track_actions[game.board.state.fascist_track - 1]
             if action is None and game.board.state.fascist_track == 6:
                 pass
@@ -978,6 +980,7 @@ def main():
     dp.add_handler(CallbackQueryHandler(pattern="(-[0-9]*)_kill_(.*)", callback=choose_kill))
     dp.add_handler(CallbackQueryHandler(pattern="(-[0-9]*)_(yesveto|noveto)", callback=choose_veto))
     dp.add_handler(CallbackQueryHandler(pattern="(-[0-9]*)_(liberal|fascist|veto)", callback=choose_policy))
+    dp.add_handler(CallbackQueryHandler(pattern="(-[0-9]*)_(Gesetz der extremen Mitte|Gesetz der AfD|veto)", callback=choose_policy))
     dp.add_handler(CallbackQueryHandler(pattern="(-[0-9]*)_(Ja|Nein)", callback=handle_voting))
 
     # log all errors
