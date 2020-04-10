@@ -83,7 +83,7 @@ def command_start(bot, update):
 					 " Ziel des Spiels ist es, den Secret Höcke zu finden und aufzuhalten."
                      " Die Mehrheit der Spieler sind PARTEI-Genossinnen. Wenn sie lernen, sich gegenseitig zu vertrauen, haben sie "
                      "genügend Stimmen, um den Tisch zu kontrollieren und das Spiel zu gewinnen. Doch manche Spieler sind Faschisten."
-                     " Sie werden alles sagen, was nötig ist, um gewählt zu werden, ihre Agenda durchsetzen und die anderen Spieler beschuldigen. The liberals must "
+                     " Sie werden alles sagen, was nötig ist, um gewählt zu werden, ihre Agenda durchsetzen und die anderen Spieler beschuldigen. "
                      " Die PARTEI-Genossinnen müssen zusammenarbeiten, um die Wahrheit herauszufinden, bevor die Faschisten ihren kaltblütigen Führer "
                      "an die Spitze der Regierung setzen und das Spiel gewinnen.\"\n- Offizielle Beschreibung von Secret Höcke\n\nFüge mich zu einer Gruppe hinzu und schreibe /newgame, um zu spielen!")
     command_help(bot, update)
@@ -110,7 +110,11 @@ def command_axel(bot, update):
 def command_stats(bot, update):
     cid = update.message.chat_id
     if cid == ADMIN:
-            stattext = "+++ Statistiken +++\n" + \
+        log.info('ADMIN calles stats')
+        with open("stats.json", 'r') as f:
+            stats = json.load(f)
+
+        stattext = "+++ Statistiken +++\n" + \
             "PARTEI-Genossin Siege (Gesetze): " + str(stats.get("libwin_policies")) + "\n" + \
             "PARTEI-Genossin Siege (Höcke getötet): " + str(stats.get("libwin_kill")) + "\n" + \
             "Faschist Siege (Gesetze): " + str(stats.get("fascwin_policies")) + "\n" + \
@@ -119,7 +123,8 @@ def command_stats(bot, update):
             "Gesamtanzahl an Gruppen: " + str(len(stats.get("groups"))) + "\n" + \
             "Aktuell laufende Spiele: " + str(len(games))
     bot.send_message(cid, stattext)
-
+     
+	
 # help page
 def command_help(bot, update):
     cid = update.message.chat_id
@@ -160,6 +165,7 @@ def command_broadcast(bot, update, args):
             stats.get("groups").remove(i)
         with open("stats.json", 'w') as f:
             json.dump(stats, f)
+            f.close()
         bot.send_message(cid, 'Messages sent!')
 
 def command_newgame(bot, update):
@@ -185,7 +191,7 @@ def command_newgame(bot, update):
               stats = json.dumps(stats_raw)
               with open("stats.json", 'w') as f:
                     json.dump(stats, f)
-
+                    f.close()
             if cid not in games.keys():
                 games[cid] = Game(cid, update.message.from_user.id)
                 with open("stats.json", 'r') as f:
@@ -266,7 +272,7 @@ def command_startgame(bot, update):
                     game.shuffle_player_sequence()
                     game.board.state.player_counter = 0
                     bot.send_message(game.cid, game.board.print_board())
-                    #bot.send_message(ADMIN, "Game of Secret Höcke started in group %s (%d)" % (group_name, cid))
+                    bot.send_message(ADMIN, "Game of Secret Höcke started in group %s (%d)" % (group_name, cid))
                     start_round(bot, game)
                 else:
                     bot.send_message(game.cid, "Nicht genügend Spieler (min. 5, max. 10). Tritt dem Spiel bei mit /join")
@@ -404,6 +410,22 @@ def handle_voting(bot, update):
     except:
         log.error("handle_voting: Game or board should not be None!")
 
+def command_calltovote(bot, update):
+    cid = update.message.chat.id
+    if cid in games.keys():
+        log.info("%s  called voting " % cid)
+        game = games[cid]
+        if game.board != None:
+            log.info(game)
+            log.info(game.player_sequence)
+            log.info(game.playerlist)
+            log.info(game.board.state.last_votes)
+            for player in game.player_sequence:
+                if player not in game.board.state.last_votes:
+                    bot.send_message(game.cid,"%s, du musst noch abstimmen! " % (game.playerlist[player.uid].name))
+        else:
+            bot.send_message(game.cid,"Sieht so aus, als gäbe es hier kein Spiel....")
+        
 
 def count_votes(bot, game):
     log.info('count_votes called')
@@ -452,6 +474,7 @@ def voting_aftermath(bot, game, voting_success):
             end_game(bot, game, game.board.state.game_endcode)
         elif game.board.state.fascist_track >= 3 and game.board.state.chancellor.is_hitler == "False" and game.board.state.chancellor not in game.board.state.not_hitlers:
             game.board.state.not_hitlers.append(game.board.state.chancellor)
+            log.info("%s war nicht hitler", game.board.state.chancellor)
             draw_policies(bot, game)
         else:
             # voting was successful and Höcke was not nominated as chancellor after 3 fascist policies
@@ -827,11 +850,11 @@ def end_game(bot, game, game_endcode):
     log.info('end_game called')
     ##
     # game_endcode:
-    #   -2  fascists win by electing Höcke as chancellor
+    #   -2  fascists win by electing Hitler as chancellor
     #   -1  fascists win with 6 fascist policies
     #   0   not ended
     #   1   liberals win with 5 liberal policies
-    #   2   liberals win by killing Höcke
+    #   2   liberals win by killing Hitler
     #   99  game cancelled
     #
     with open("stats.json", 'r') as f:
@@ -840,11 +863,13 @@ def end_game(bot, game, game_endcode):
     if game_endcode == 99:
         if games[game.cid].board is not None:
             bot.send_message(game.cid,
-                             "Spiel beendet!\n\n%s" % game.print_roles())
-            #bot.send_message(ADMIN, "Game of Secret Höcke canceled in group %d" % game.cid)
-        #    stats['cancelled'] = stats['cancelled'] + 1
+                             "Spiel abgebrochen!\n\n%s" % game.print_roles())
+            bot.send_message(ADMIN, "Game of Secret Hitler canceled in group %d" % game.cid)
+            stats['cancelled'] = stats['cancelled'] + 1
         else:
             bot.send_message(game.cid, "Spiel beendet!")
+            stats['cancelled'] = stats['cancelled'] + 1
+            bot.send_message(ADMIN, "Game of Secret Hitler canceled in group %d" % game.cid)
     else:
         if game_endcode == -2:
             bot.send_message(game.cid,
@@ -863,10 +888,66 @@ def end_game(bot, game, game_endcode):
                              "Game over! Die PARTEI-Genossinnen gewinnen, indem sie Bernd Höcke erschossen haben! FCK AFD!\n\n%s" % game.print_roles())
             stats['libwin_kill'] = stats['libwin_kill'] + 1
 
+        bot.send_message(ADMIN, "Game of Secret Hitler ended in group %d" % game.cid)
+
+    with open("stats.json", 'w') as f:
+        json.dump(stats, f)
+        f.close()
+    del games[game.cid]
+
+
+
+
+
+def end_game_old(bot, game, game_endcode):
+    log.info('end_game called')
+    ##
+    # game_endcode:
+    #   -2  fascists win by electing Höcke as chancellor
+    #   -1  fascists win with 6 fascist policies
+    #   0   not ended
+    #   1   liberals win with 5 liberal policies
+    #   2   liberals win by killing Höcke
+    #   99  game cancelled
+    #
+    with open("stats.json", 'r') as f:
+        stats = json.load(f)
+
+    if game_endcode == 99:
+        if games[game.cid].board is not None:
+            bot.send_message(game.cid,
+                             "Spiel beendet!\n\n%s" % game.print_roles())
+            bot.send_message(ADMIN, "Game of Secret Höcke canceled in group %d" % game.cid)
+            del games[game.cid]
+        else:
+            bot.send_message(game.cid, "Spiel beendet!")
+    else:
+        if game_endcode == -2:
+            bot.send_message(game.cid,
+                             "Game over! Die Faschisten gewinnen, indem Höcke zum Kanzler gewählt wurde!\n\n%s" % game.print_roles())
+            stats['fascwin_hitler'] = stats['fascwin_hitler'] + 1
+            del games[game.cid]
+        if game_endcode == -1:
+            bot.send_message(game.cid,
+                             "Game over! Die Faschisten gewinnen, indem sie 6 faschistische Gesetze verabschiedet haben!\n\n%s" % game.print_roles())
+            stats['fascwin_policies'] = stats['fascwin_policies'] + 1
+            del games[game.cid]
+        if game_endcode == 1:
+            bot.send_message(game.cid,
+                             "Game over! Die PARTEI-Genossinnen gewinnen, indem sie 5 Gesetze der extremen Mitte verabschiedet haben!\n\n%s" % game.print_roles())
+            stats['libwin_policies'] = stats['libwin_policies'] + 1
+            del games[game.cid]
+        if game_endcode == 2:
+            bot.send_message(game.cid,
+                             "Game over! Die PARTEI-Genossinnen gewinnen, indem sie Bernd Höcke erschossen haben! FCK AFD!\n\n%s" % game.print_roles())
+            stats['libwin_kill'] = stats['libwin_kill'] + 1
+            del games[game.cid]
+
         bot.send_message(ADMIN, "Game of Secret Höcke ended in group %d" % game.cid)
 
     with open("stats.json", 'w') as f:
         json.dump(stats, f)
+        f.close()
     del games[game.cid]
 
 
@@ -1000,7 +1081,8 @@ def main():
     dp.add_handler(CommandHandler("cancelgame", command_cancelgame))
     dp.add_handler(CommandHandler("broadcast", command_broadcast, pass_args=True))
     dp.add_handler(CommandHandler("join", command_join))
-
+    dp.add_handler(CommandHandler("calltovote", command_calltovote))
+    dp.add_handler(CommandHandler("aufrufzurabstimmung", command_calltovote))
     dp.add_handler(CallbackQueryHandler(pattern="(-[0-9]*)_chan_(.*)", callback=nominate_chosen_chancellor))
     dp.add_handler(CallbackQueryHandler(pattern="(-[0-9]*)_insp_(.*)", callback=choose_inspect))
     dp.add_handler(CallbackQueryHandler(pattern="(-[0-9]*)_choo_(.*)", callback=choose_choose))

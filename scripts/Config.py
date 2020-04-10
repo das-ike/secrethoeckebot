@@ -1,2 +1,2 @@
-TOKEN = "1165532435:AAGuFgeUXdcAEJFkqQsDAhyHTEwOonQrzVU"
-ADMIN = 140233487
+TOKEN = "telegram_api_token"
+ADMIN = admin_telegram_ID
